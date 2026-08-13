@@ -3,13 +3,15 @@ import requests
 
 from selenium import webdriver
 from selenium.webdriver.common.by import By
+from selenium.webdriver.firefox.service import Service
 
 from time import sleep
 
 class Autorsvp():
 	def __init__(self,email,password):
 
-		self.browser = webdriver.Firefox(executable_path="./drivers/geckodriver")
+		service = Service(executable_path="./drivers/geckodriver")
+		self.browser = webdriver.Firefox(service=service)
 		self.browser.get("https://www.meetup.com")
 
 		self.email = email
