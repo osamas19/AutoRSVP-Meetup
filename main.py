@@ -3,6 +3,8 @@ import requests
 
 from selenium import webdriver
 from selenium.webdriver.common.by import By
+from selenium.webdriver.support.ui import WebDriverWait
+from selenium.webdriver.support import expected_conditions as EC
 
 from time import sleep
 
@@ -10,41 +12,32 @@ class Autorsvp():
 	def __init__(self,email,password):
 
 		self.browser = webdriver.Firefox()
-		self.browser.get("https://www.meetup.com")
+		self.wait = WebDriverWait(self.browser, 20)
 
 		self.email = email
 		self.password = password
-	
+
 	def login_with_email(self):
-		
-		sleep(5)
 
-		login_button = self.browser.find_element(By.XPATH,'//*[@id="login-link"]')
-		login_button.click()
-		
-		sleep(6)
+		self.browser.get("https://www.meetup.com/login/")
 
-		email_box = self.browser.find_element(By.ID,"email")
+		email_box = self.wait.until(EC.presence_of_element_located((By.ID,"email")))
 		email_box.send_keys(self.email)
-
-		sleep(6)
 
 		password_box = self.browser.find_element(By.ID,"current-password")
 		password_box.send_keys(self.password)
-		
-		sleep(6)
 
 		login_button = self.browser.find_element(By.NAME,"submitButton")
 		login_button.click()
 
-		sleep(15)
+		# Wait until we've left the login page (or the login form disappears)
+		self.wait.until(lambda d: "/login" not in d.current_url)
 
 
 
 	def rsvp_meeting(self,link):
 		self.browser.get("https://www.meetup.com" + link)
-		sleep(6)
-
+		self.wait.until(EC.presence_of_element_located((By.TAG_NAME,"body")))
 
 		#If Already RSVP'ed
 
@@ -52,7 +45,9 @@ class Autorsvp():
 			return
 
 		#Click RSVP Button
-		attend_button = self.browser.find_element(By.XPATH,'/html/body/div[1]/div[2]/div[2]/div[2]/main/div[4]/div/div/div[2]/div/div[2]/div[3]/button')
+		attend_button = self.wait.until(
+			EC.element_to_be_clickable((By.XPATH,"//button[contains(., 'Attend')]"))
+		)
 		attend_button.click()
 
 		sleep(10)
