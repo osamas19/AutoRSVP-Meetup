@@ -125,38 +125,41 @@ if __name__ == "__main__":
 	#Storing Visited Links to Increase Performance
 	visitedLinks = set()
 
-	while True:
-		# Run this every 1 hour
-		
-		# Setup Browser
-		rsvper = Autorsvp(email,password)
+	# Setup Browser & Login (once) - the browser stays open and logged in
+	# for the whole run, so you only need to solve the "I am human" check
+	# a single time instead of on every hourly cycle.
+	rsvper = Autorsvp(email,password)
+	rsvper.login_with_email()
 
+	try:
+		while True:
+			# Run this every 1 hour
 
-		# Login
-		rsvper.login_with_email()
+			# Get Groups Details
 
-		# Get Groups Details
+			for grp in groups:
 
-		for grp in groups:
-				
-			print(grp)
+				print(grp)
 
-			eventLinks = fetch_events_by_group(grp)
+				eventLinks = fetch_events_by_group(grp)
 
-			for link in eventLinks:
-				print(link)
+				for link in eventLinks:
+					print(link)
 
-				if link in visitedLinks:
-					continue
+					if link in visitedLinks:
+						continue
 
-				visitedLinks.add(link)
+					visitedLinks.add(link)
 
-				rsvper.rsvp_meeting(link)
+					rsvper.rsvp_meeting(link)
 
-				sleep(6)
-			
-			print()
+					sleep(6)
 
+				print()
+
+			sleep(waitTime*60)
+	except KeyboardInterrupt:
+		print("\nStopping...")
+	finally:
 		rsvper.closeBrowser()
-		sleep(waitTime*60)
 
