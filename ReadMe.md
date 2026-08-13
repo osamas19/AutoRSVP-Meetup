@@ -36,4 +36,7 @@ python3 main.py
 ```
 5. Enter your Meetup Email and Password with the groups that you need to RSVP's events of (Note- You should have joined the group on Meetup in case the group is not public) 
 
+## Notes
+- Firefox must be installed on your machine. Geckodriver is located and downloaded automatically by Selenium's built-in Selenium Manager (Selenium 4.6+), so no manual driver setup is required.
+
 
